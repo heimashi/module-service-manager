@@ -1,0 +1,10 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.rong360.example.b">
+
+    <application>
+
+        <activity android:name=".BModuleActivity" />
+
+    </application>
+
+</manifest>

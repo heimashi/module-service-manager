@@ -1,0 +1,2 @@
+include ':msm-annotations', ':msm-api', ':msm-compiler', ':msm-gradle-plugin',
+        ':sample:app', ':sample:module-a', ':sample:module-b', ':sample:common'

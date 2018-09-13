@@ -1,0 +1,43 @@
+package com.rong360.example.b
+
+import android.app.Activity
+import android.os.Bundle
+import android.widget.Toast
+import com.rong360.example.common.IAModuleCalculateService
+import com.rong360.msm.api.IModuleService
+import com.rong360.msm.api.ModuleServiceManager
+import kotlinx.android.synthetic.main.module_b_activity.*
+
+class BModuleActivity : Activity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.module_b_activity)
+
+        viewContainer.addView(ModuleServiceManager.instance.loadView(this, "AModuleView"))
+        val service = ModuleServiceManager.instance.loadService("AModuleCalculateService") as IAModuleCalculateService?
+        val service2 = ModuleServiceManager.instance.loadService("AModuleCalculateService2") as IModuleService?
+        var flag = true
+        callAMsg.setOnClickListener {
+            if (flag) {
+                service?.showMsg(this@BModuleActivity)
+            } else {
+                service2?.onStartCommand("showMsg", Bundle().apply { putString("MSG", "SERVICE2") }, context = this)
+            }
+        }
+        callACal.setOnClickListener {
+            var res: Int? = null
+            if (flag) {
+                res = service?.calculate(100)
+            } else {
+                val output = Bundle()
+                service2?.onStartCommand("calculate", Bundle().apply { putInt("INPUT", 100) }, output)
+                res = output.getInt("OUTPUT")
+            }
+            Toast.makeText(this@BModuleActivity, "Result:$res", Toast.LENGTH_SHORT).show()
+        }
+        changeService.setOnClickListener {
+            flag = !flag
+        }
+    }
+}

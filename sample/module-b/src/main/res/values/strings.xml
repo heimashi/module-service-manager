@@ -1,0 +1,6 @@
+<resources>
+    <string name="content">This is B Module</string>
+    <string name="click_a_msg">Call msg From A module service</string>
+    <string name="click_a_cal">Call calculate From A module service</string>
+    <string name="change_service">Change Service</string>
+</resources>
