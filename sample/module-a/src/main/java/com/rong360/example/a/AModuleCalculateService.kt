@@ -5,7 +5,7 @@ import android.widget.Toast
 import com.rong360.example.common.IAModuleCalculateService
 import com.rong360.msm.annotations.ModuleService
 
-@ModuleService(register = "AModuleCalculateService")
+@ModuleService(register = "AModuleCalculateService", desc = "Module A Calculate Service")
 class AModuleCalculateService : IAModuleCalculateService {
 
     override fun showMsg(context: Context) {

@@ -3,7 +3,7 @@ package com.rong360.msm.api
 import android.content.Context
 import android.view.View
 
-class ModuleServiceManager private constructor(){
+class ModuleServiceManager private constructor() {
 
     private val serviceMap = hashMapOf<String, Class<*>>()
 
@@ -42,10 +42,14 @@ class ModuleServiceManager private constructor(){
         return viewMap[viewRegisterName]
     }
 
-    fun registerModule(module: ModuleInterface?) {
-        module ?: return
-        serviceMap.putAll(module.getModuleService())
-        viewMap.putAll(module.getModuleView())
+    fun registerModules(vararg modules: ModuleInterface?) {
+        modules ?: return
+        for (module in modules) {
+            module?.let {
+                serviceMap.putAll(it.getModuleService())
+                viewMap.putAll(it.getModuleView())
+            }
+        }
     }
 
     companion object {
