@@ -12,13 +12,15 @@ class AModuleActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.module_a_activity)
         val bView = ModuleServiceManager.instance.loadView(this, "BModuleView")
-        viewContainer.addView(bView)
         showBMsg.setOnClickListener {
             bView?.let {
-                if(it is IModuleService){
+                if (it is IModuleService) {
                     it.onStartCommand("ShowMsg", Bundle().apply { putString("INPUT", "TEST") }, context = this@AModuleActivity)
                 }
             }
+        }
+        bView?.let {
+            viewContainer.addView(it)
         }
     }
 }

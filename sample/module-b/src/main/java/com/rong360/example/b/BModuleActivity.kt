@@ -14,7 +14,10 @@ class BModuleActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.module_b_activity)
 
-        viewContainer.addView(ModuleServiceManager.instance.loadView(this, "AModuleView"))
+        val aView = ModuleServiceManager.instance.loadView(this, "AModuleView")
+        aView?.let {
+            viewContainer.addView(it)
+        }
         val service = ModuleServiceManager.instance.loadService("AModuleCalculateService") as IAModuleCalculateService?
         val service2 = ModuleServiceManager.instance.loadService("AModuleCalculateService2") as IModuleService?
         var flag = true
