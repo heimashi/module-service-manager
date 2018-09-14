@@ -3,10 +3,10 @@ package com.rong360.example.a
 import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
+import com.rong360.msm.annotations.ModuleService
 import com.rong360.msm.api.IModuleService
-import com.rong360.msm.api.ModuleService
 
-@ModuleService(register = "AModuleCalculateService")
+@ModuleService(register = "AModuleCalculateService2")
 class AModuleCalculateService2 : IModuleService {
 
     override fun onStartCommand(type: String, inputParams: Bundle?, outputParams: Bundle?, context: Context?) {

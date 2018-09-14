@@ -23,9 +23,6 @@ class ExampleActivity : AppCompatActivity() {
     }
 
     private fun addTestCode() {
-//        ModuleServiceManager.instance.addService("AModuleCalculateService", AModuleCalculateService::class.java)
-//        ModuleServiceManager.instance.addService("AModuleCalculateService2", AModuleCalculateService2::class.java)
-//        ModuleServiceManager.instance.addView("AModuleView", AModuleView::class.java)
         ModuleServiceManager.instance.registerModule(AModuleIndex())
     }
 }

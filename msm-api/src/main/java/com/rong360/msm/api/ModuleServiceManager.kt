@@ -38,7 +38,7 @@ class ModuleServiceManager private constructor(){
         return output.getDeclaredConstructor(Context::class.java).newInstance(context)
     }
 
-    fun loadViewClass(context: Context, viewRegisterName: String): Class<out View>? {
+    fun loadViewClass(viewRegisterName: String): Class<out View>? {
         return viewMap[viewRegisterName]
     }
 

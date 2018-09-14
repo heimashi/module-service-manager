@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.LinearLayout
 import android.widget.Toast
-import com.rong360.msm.api.ModuleView
+import com.rong360.msm.annotations.ModuleView
 import kotlinx.android.synthetic.main.module_a_view.view.*
 
 @ModuleView(register = "AModuleView")

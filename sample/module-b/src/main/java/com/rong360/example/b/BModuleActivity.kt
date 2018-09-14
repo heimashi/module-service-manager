@@ -26,7 +26,7 @@ class BModuleActivity : Activity() {
             }
         }
         callACal.setOnClickListener {
-            var res: Int? = null
+            val res: Int?
             if (flag) {
                 res = service?.calculate(100)
             } else {

@@ -1,6 +1,8 @@
-package com.rong360.msm.api;
+package com.rong360.msm.compiler;
 
 import com.google.auto.service.AutoService;
+import com.rong360.msm.annotations.ModuleService;
+import com.rong360.msm.annotations.ModuleView;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -40,7 +42,6 @@ public class MsmAnnotationProcessor extends AbstractProcessor {
                     " passed to annotation processor");
             throw new RuntimeException("MSM::Please set MSM_INDEX in build.gradle");
         }
-        messager.printMessage(Diagnostic.Kind.NOTE, "MSM::msmIndex is " + msmIndex);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class MsmAnnotationProcessor extends AbstractProcessor {
         if (!(serviceClassMap.isEmpty()&&viewClassMap.isEmpty())) {
             createInfoIndexFile();
         } else {
-            messager.printMessage(Diagnostic.Kind.WARNING, "MSM::No @ModuleService and @ModuleVie annotations found");
+            messager.printMessage(Diagnostic.Kind.WARNING, "MSM::No @ModuleService and @ModuleView annotations found");
         }
         return false;
     }
@@ -90,8 +91,6 @@ public class MsmAnnotationProcessor extends AbstractProcessor {
                     messager.printMessage(Diagnostic.Kind.ERROR, "MSM::Duplicate service name: " + serviceName);
                     throw new RuntimeException("MSM::Please fix duplicate service name: " + serviceName);
                 }
-                messager.printMessage(Diagnostic.Kind.NOTE, "MSM::add service name:" + serviceName + " class:" +
-                        fullClassName);
                 serviceClassMap.put(serviceName, fullClassName);
             } else {
                 messager.printMessage(Diagnostic.Kind.ERROR, "@ModuleService is only valid for type", element);
@@ -118,8 +117,6 @@ public class MsmAnnotationProcessor extends AbstractProcessor {
                     messager.printMessage(Diagnostic.Kind.ERROR, "MSM::Duplicate view name: " + viewName);
                     throw new RuntimeException("MSM::Please fix duplicate view name: " + viewName);
                 }
-                messager.printMessage(Diagnostic.Kind.NOTE, "MSM::add view name:" + viewName + " class:" +
-                        fullClassName);
                 viewClassMap.put(viewName, fullClassName);
             } else {
                 messager.printMessage(Diagnostic.Kind.ERROR, "@ModuleView is only valid for type", element);
@@ -151,11 +148,11 @@ public class MsmAnnotationProcessor extends AbstractProcessor {
             writer.write("\n    public " + clazz + "() {\n");
             writeIndexLines(writer);
             writer.write("    }\n\n");
-            writer.write("    @NotNull\n     @Override\n"
+            writer.write("    @NotNull\n    @Override\n"
                     + "    public HashMap<String, Class<? extends View>> getModuleView() {\n"
                     + "        return viewMap;\n"
                     + "    }\n\n");
-            writer.write("    @NotNull\n     @Override\n"
+            writer.write("    @NotNull\n    @Override\n"
                     + "    public HashMap<String, Class<?>> getModuleService() {\n"
                     + "        return serviceMap;\n"
                     + "    }");
@@ -181,7 +178,7 @@ public class MsmAnnotationProcessor extends AbstractProcessor {
             if (desc != null && !"".equals(desc)) {
                 writer.write("         /** " + desc + " */\n");
             }
-            writer.write("         serviceMap.put(\"" + serviceName + "\", " + fullClass + ".class );\n");
+            writer.write("         serviceMap.put(\"" + serviceName + "\", " + fullClass + ".class);\n");
         }
         for (String serviceName : viewClassMap.keySet()) {
             String desc = viewDescMap.get(serviceName);
@@ -189,7 +186,7 @@ public class MsmAnnotationProcessor extends AbstractProcessor {
             if (desc != null && !"".equals(desc)) {
                 writer.write("         /** " + desc + " */\n");
             }
-            writer.write("         viewMap.put(\"" + serviceName + "\", " + fullClass + ".class );\n");
+            writer.write("         viewMap.put(\"" + serviceName + "\", " + fullClass + ".class);\n");
         }
     }
 

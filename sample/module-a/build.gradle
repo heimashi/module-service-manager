@@ -13,7 +13,7 @@ android {
         versionName "1.0"
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [MSM_INDEX: 'com.rong360.example.a.AModuleIndex2']
+                arguments = [MSM_INDEX: 'com.rong360.example.a.AModuleIndex']
             }
         }
     }
@@ -28,9 +28,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation project(':sample:common')
+    api project(':sample:common')
     kapt project(':msm-compiler')
 
 }
