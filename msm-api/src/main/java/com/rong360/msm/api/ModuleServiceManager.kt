@@ -42,7 +42,7 @@ class ModuleServiceManager private constructor() {
         return viewMap[viewRegisterName]
     }
 
-    fun registerModules(vararg modules: ModuleInterface?) {
+    fun registerModules(vararg modules: IModule?) {
         modules ?: return
         for (module in modules) {
             module?.let {

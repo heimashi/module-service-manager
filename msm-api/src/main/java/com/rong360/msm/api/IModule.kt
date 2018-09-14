@@ -2,7 +2,7 @@ package com.rong360.msm.api
 
 import android.view.View
 
-interface ModuleInterface {
+interface IModule {
 
     fun getModuleView(): HashMap<String, Class<out View>>
 
