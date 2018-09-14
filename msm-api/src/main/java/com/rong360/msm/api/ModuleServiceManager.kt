@@ -3,7 +3,7 @@ package com.rong360.msm.api
 import android.content.Context
 import android.view.View
 
-class ModuleServiceManager {
+class ModuleServiceManager private constructor(){
 
     private val serviceMap = hashMapOf<String, Class<*>>()
 
@@ -32,10 +32,6 @@ class ModuleServiceManager {
         return serviceMap[serviceRegisterName]
     }
 
-    fun addService(serviceRegisterName: String, cls: Class<*>) {
-        serviceMap[serviceRegisterName] = cls
-    }
-
     fun loadView(context: Context, viewRegisterName: String): View? {
         val output = viewMap[viewRegisterName]
         output ?: return null
@@ -46,8 +42,10 @@ class ModuleServiceManager {
         return viewMap[viewRegisterName]
     }
 
-    fun addView(viewRegisterName: String, viewCls: Class<out View>) {
-        viewMap[viewRegisterName] = viewCls
+    fun registerModule(module: ModuleInterface?) {
+        module ?: return
+        serviceMap.putAll(module.getModuleService())
+        viewMap.putAll(module.getModuleView())
     }
 
     companion object {
