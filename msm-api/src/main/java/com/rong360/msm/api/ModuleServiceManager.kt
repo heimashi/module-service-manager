@@ -13,6 +13,15 @@ class ModuleServiceManager private constructor() {
         internal var instance = ModuleServiceManager()
     }
 
+    init {
+        try {
+            val moduleIndex = Class.forName("com.rong360.msm.api.DefaultModuleIndex")
+            registerModules(moduleIndex.newInstance() as IModule)
+        } catch (e: Exception) {
+            //ignore
+        }
+    }
+
     fun loadService(serviceRegisterName: String): Any? {
         val output = serviceMap[serviceRegisterName]
         output ?: return null
@@ -43,7 +52,6 @@ class ModuleServiceManager private constructor() {
     }
 
     fun registerModules(vararg modules: IModule?) {
-        modules ?: return
         for (module in modules) {
             module?.let {
                 serviceMap.putAll(it.getModuleService())

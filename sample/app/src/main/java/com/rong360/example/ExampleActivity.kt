@@ -4,8 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.rong360.example.a.*
-import com.rong360.example.b.BModuleActivity
-import com.rong360.example.b.BModuleIndex
+import com.rong360.example.b.*
 import com.rong360.msm.api.ModuleServiceManager
 import kotlinx.android.synthetic.main.app_activity_example.*
 
@@ -24,6 +23,6 @@ class ExampleActivity : AppCompatActivity() {
     }
 
     private fun initModules() {
-        ModuleServiceManager.instance.registerModules(AModuleIndex(), BModuleIndex())
+        //ModuleServiceManager.instance.registerModules(AModuleIndex(), BModuleIndex())
     }
 }
