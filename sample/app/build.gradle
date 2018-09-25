@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.rong360.msm.plugin'
 
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -20,7 +21,15 @@ android {
     }
 }
 
+
+
+
 dependencies {
-    implementation project(':sample:module-a')
-    implementation project(':sample:module-b')
+    if (!AIsApplicationMode.toBoolean()) {
+        runtimeOnly project(':sample:module-a')
+    }
+    if (!BIsApplicationMode.toBoolean()) {
+        runtimeOnly project(':sample:module-b')
+    }
+    implementation project(':sample:common')
 }

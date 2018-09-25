@@ -1,7 +1,10 @@
-apply plugin: 'com.android.library'
+if(BIsApplicationMode.toBoolean()){
+    apply plugin: 'com.android.application'
+}else{
+    apply plugin: 'com.android.library'
+}
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 27
@@ -11,13 +14,18 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+    }
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = [MSM_INDEX: 'com.rong360.example.b.BModuleIndex']
+    sourceSets {
+        main {
+            if(BIsApplicationMode.toBoolean()){
+                manifest.srcFile 'src/main/release/AndroidManifest.xml'
+            }else{
+                manifest.srcFile 'src/main/AndroidManifest.xml'
             }
         }
     }
+
 
     buildTypes {
         release {
@@ -30,7 +38,6 @@ android {
 
 dependencies {
     implementation project(':sample:common')
-    kapt project(':msm-compiler')
 }
 repositories {
     mavenCentral()
