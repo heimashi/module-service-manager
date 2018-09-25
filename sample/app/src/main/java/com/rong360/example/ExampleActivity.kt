@@ -13,7 +13,7 @@ class ExampleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_activity_example)
-        //initModules()
+        initModules()
         toAModule.setOnClickListener {
             startActivity(Intent(this, AModuleActivity::class.java))
         }
@@ -23,6 +23,6 @@ class ExampleActivity : AppCompatActivity() {
     }
 
     private fun initModules() {
-        //ModuleServiceManager.instance.registerModules(AModuleIndex(), BModuleIndex())
+        ModuleServiceManager.instance.registerModules(AModuleIndex(), BModuleIndex())
     }
 }
