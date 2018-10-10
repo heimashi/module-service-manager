@@ -1,0 +1,13 @@
+//get gradle.property or ext.property boolean value
+def getBooleanPropertyIfExist(propertyString) {
+    if(hasProperty(propertyString)){
+        if(project[propertyString].toBoolean()){
+            return true
+        }
+    }
+    return false
+}
+
+ext {
+    getBooleanPropertyIfExist = this.&getBooleanPropertyIfExist
+}

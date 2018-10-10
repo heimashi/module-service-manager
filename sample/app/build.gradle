@@ -25,10 +25,10 @@ android {
 
 
 dependencies {
-    if (!AIsApplicationMode.toBoolean()) {
+    if (!getBooleanPropertyIfExist("AIsApplicationMode")) {
         runtimeOnly project(':sample:module-a')
     }
-    if (!BIsApplicationMode.toBoolean()) {
+    if (!getBooleanPropertyIfExist("BIsApplicationMode")) {
         runtimeOnly project(':sample:module-b')
     }
     implementation project(':sample:common')

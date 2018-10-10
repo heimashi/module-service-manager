@@ -1,4 +1,4 @@
-if(AIsApplicationMode.toBoolean()){
+if(getBooleanPropertyIfExist("AIsApplicationMode")){
     apply plugin: 'com.android.application'
 }else{
     apply plugin: 'com.android.library'
@@ -18,7 +18,7 @@ android {
 
     sourceSets {
         main {
-            if(AIsApplicationMode.toBoolean()){
+            if(getBooleanPropertyIfExist("AIsApplicationMode")){
                 manifest.srcFile 'src/main/release/AndroidManifest.xml'
             }else{
                 manifest.srcFile 'src/main/AndroidManifest.xml'
