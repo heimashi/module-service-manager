@@ -4,13 +4,14 @@ buildscript {
         google()
         jcenter()
         maven {
-            url "$rootDir/local_maven"
+            url 'https://dl.bintray.com/heimashi/maven'
         }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'com.rong360.msm.plugin:msm-gradle-plugin:1.0.0'
+        classpath 'com.rong360.msm:msm-gradle-plugin:1.0.0'
+        classpath 'com.novoda:bintray-release:0.8.0'
     }
 }
 
@@ -18,6 +19,9 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven {
+            url 'https://dl.bintray.com/heimashi/maven'
+        }
     }
     apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle"
 }

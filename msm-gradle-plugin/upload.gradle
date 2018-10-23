@@ -1,0 +1,10 @@
+apply plugin: 'com.novoda.bintray-release'
+
+publish {
+    userOrg = 'heimashi'
+    groupId = 'com.rong360.msm'
+    artifactId = 'msm-gradle-plugin'
+    publishVersion = '1.0.0'
+    desc = 'Module service manager(msm-gradle-plugin)'
+    website = 'https://github.com/heimashi/module-service-manager'
+}
