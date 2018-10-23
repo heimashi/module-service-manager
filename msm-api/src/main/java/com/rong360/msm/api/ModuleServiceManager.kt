@@ -1,6 +1,7 @@
 package com.rong360.msm.api
 
 import android.content.Context
+import android.support.v4.app.Fragment
 import android.view.View
 
 class ModuleServiceManager private constructor() {
@@ -8,6 +9,8 @@ class ModuleServiceManager private constructor() {
     private val serviceMap = hashMapOf<String, Class<*>>()
 
     private val viewMap = hashMapOf<String, Class<out View>>()
+
+    private val fragmentMap = hashMapOf<String, Class<out Fragment>>()
 
     private object SingletonHolder {
         internal var instance = ModuleServiceManager()
@@ -51,10 +54,17 @@ class ModuleServiceManager private constructor() {
         return viewMap[viewRegisterName]
     }
 
+    fun loadFragment(viewRegisterName: String): Fragment? {
+        val output = fragmentMap[viewRegisterName]
+        output ?: return null
+        return output.newInstance()
+    }
+
     fun registerModules(vararg modules: IModule?) {
         for (module in modules) {
             module?.let {
                 serviceMap.putAll(it.getModuleService())
+                fragmentMap.putAll(it.getModuleFragment())
                 viewMap.putAll(it.getModuleView())
             }
         }

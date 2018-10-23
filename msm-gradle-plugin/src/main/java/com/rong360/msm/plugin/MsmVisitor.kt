@@ -1,5 +1,6 @@
 package com.rong360.msm.plugin
 
+import com.rong360.msm.annotations.ModuleFragment
 import java.util.HashMap
 
 import org.objectweb.asm.AnnotationVisitor
@@ -14,6 +15,7 @@ class MsmVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
 
     var serviceMap = HashMap<String, String>()
     var viewMap = HashMap<String, String>()
+    var fragmentMap = HashMap<String, String>()
     private var className: String? = null
 
     override fun visit(version: Int, access: Int, name: String?, signature: String?, superName: String?, interfaces:
@@ -25,10 +27,13 @@ class MsmVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     override fun visitAnnotation(desc: String?, visible: Boolean): AnnotationVisitor {
         val annotationVisitor = super.visitAnnotation(desc, visible)
         if (Type.getDescriptor(ModuleService::class.java) == desc) {
-            return ModuleAnnotationVisitor(Opcodes.ASM5, annotationVisitor, className!!, serviceMap)
+            return ModuleAnnotationVisitor(Opcodes.ASM5, annotationVisitor, className, serviceMap)
+        }
+        if (Type.getDescriptor(ModuleFragment::class.java) == desc) {
+            return ModuleAnnotationVisitor(Opcodes.ASM5, annotationVisitor, className, fragmentMap)
         }
         return if (Type.getDescriptor(ModuleView::class.java) == desc) {
-            ModuleAnnotationVisitor(Opcodes.ASM5, annotationVisitor, className!!, viewMap)
+            ModuleAnnotationVisitor(Opcodes.ASM5, annotationVisitor, className, viewMap)
         } else annotationVisitor
     }
 

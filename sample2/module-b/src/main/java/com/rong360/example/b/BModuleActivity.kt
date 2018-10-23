@@ -1,14 +1,14 @@
 package com.rong360.example.b
 
-import android.app.Activity
 import android.os.Bundle
+import android.support.v4.app.FragmentActivity
 import android.widget.Toast
 import com.rong360.example.common.IAModuleCalculateService
 import com.rong360.msm.api.IModuleService
 import com.rong360.msm.api.ModuleServiceManager
 import kotlinx.android.synthetic.main.module_b_activity.*
 
-class BModuleActivity : Activity() {
+class BModuleActivity : FragmentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,6 +18,13 @@ class BModuleActivity : Activity() {
         aView?.let {
             viewContainer.addView(it)
         }
+
+        ModuleServiceManager.instance.loadFragment("AModuleFragment")?.let {
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.add(R.id.fragmentContainer, it)
+            transaction.commit()
+        }
+
         val service = ModuleServiceManager.instance.loadService("AModuleCalculateService") as IAModuleCalculateService?
         val service2 = ModuleServiceManager.instance.loadService("AModuleCalculateService2") as IModuleService?
         var flag = true

@@ -26,6 +26,7 @@ import java.io.InputStream
 class MsmServiceTransform : Transform() {
     private var serviceMap = HashMap<String, String>()
     private var viewMap = HashMap<String, String>()
+    private var fragmentMap = HashMap<String, String>()
 
     override fun getName(): String {
         return "MsmServiceTransform"
@@ -63,6 +64,7 @@ class MsmServiceTransform : Transform() {
         classReader.accept(msmVisitor, ClassReader.EXPAND_FRAMES)
         serviceMap.putAll(msmVisitor.serviceMap)
         viewMap.putAll(msmVisitor.viewMap)
+        fragmentMap.putAll(msmVisitor.fragmentMap)
         inputStream?.close()
     }
 
@@ -120,7 +122,7 @@ class MsmServiceTransform : Transform() {
             val jarOutputStream = JarOutputStream(fos)
             val zipEntry = ZipEntry("com/rong360/msm/api/DefaultModuleIndex.class")
             jarOutputStream.putNextEntry(zipEntry)
-            jarOutputStream.write(moduleInfoWriter.dump(serviceMap, viewMap))
+            jarOutputStream.write(moduleInfoWriter.dump(serviceMap, viewMap, fragmentMap))
             jarOutputStream.closeEntry()
             jarOutputStream.close()
             fos.close()

@@ -1,9 +1,0 @@
-apply plugin: 'java-library'
-
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
-
-dependencies {
-    implementation project(':msm-annotations')
-    implementation 'com.google.auto.service:auto-service:1.0-rc3'
-}

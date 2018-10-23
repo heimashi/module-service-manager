@@ -1,8 +1,4 @@
-if(getBooleanPropertyIfExist("BIsApplicationMode")){
-    apply plugin: 'com.android.application'
-}else{
-    apply plugin: 'com.android.library'
-}
+apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
@@ -15,17 +11,6 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
-    sourceSets {
-        main {
-            if(getBooleanPropertyIfExist("BIsApplicationMode")){
-                manifest.srcFile 'src/main/release/AndroidManifest.xml'
-            }else{
-                manifest.srcFile 'src/main/AndroidManifest.xml'
-            }
-        }
-    }
-
 
     buildTypes {
         release {

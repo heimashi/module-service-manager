@@ -12,7 +12,8 @@ import org.objectweb.asm.Type
 
 class ModuleInfoWriter : Opcodes {
 
-    fun dump(serviceMap: HashMap<String, String>, viewMap: HashMap<String, String>): ByteArray {
+    fun dump(serviceMap: HashMap<String, String>, viewMap: HashMap<String, String>, fragmentMap: HashMap<String,
+            String>): ByteArray {
 
         val cw = ClassWriter(0)
         var fv: FieldVisitor
@@ -32,6 +33,12 @@ class ModuleInfoWriter : Opcodes {
         run {
             fv = cw.visitField(Opcodes.ACC_PRIVATE + Opcodes.ACC_FINAL + Opcodes.ACC_STATIC, "viewMap", "Ljava/util/HashMap;",
                     "Ljava/util/HashMap<Ljava/lang/String;Ljava/lang/Class<+Landroid/view/View;>;>;", null)
+            fv.visitEnd()
+        }
+        run {
+            fv = cw.visitField(Opcodes.ACC_PRIVATE + Opcodes.ACC_FINAL + Opcodes.ACC_STATIC, "fragmentMap", "Ljava/util/HashMap;",
+                    "Ljava/util/HashMap<Ljava/lang/String;Ljava/lang/Class<+Landroid/support/v4/app/Fragment;>;>;",
+                    null)
             fv.visitEnd()
         }
         run {
@@ -61,6 +68,33 @@ class ModuleInfoWriter : Opcodes {
             mv.visitLabel(l0)
             mv.visitLineNumber(16, l0)
             mv.visitFieldInsn(Opcodes.GETSTATIC, "com/rong360/msm/api/DefaultModuleIndex", "viewMap", "Ljava/util/HashMap;")
+            mv.visitInsn(Opcodes.DUP)
+            val l1 = Label()
+            mv.visitJumpInsn(Opcodes.IFNONNULL, l1)
+            mv.visitInsn(Opcodes.ICONST_0)
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "com/rong360/msm/api/DefaultModuleIndex", "$$\$reportNull$$$0", "(I)V",
+                    false)
+            mv.visitLabel(l1)
+            mv.visitFrame(Opcodes.F_SAME1, 0, null, 1, arrayOf<Any>("java/util/HashMap"))
+            mv.visitInsn(Opcodes.ARETURN)
+            val l2 = Label()
+            mv.visitLabel(l2)
+            mv.visitLocalVariable("this", "Lcom/rong360/msm/api/DefaultModuleIndex;", null, l0, l2, 0)
+            mv.visitMaxs(2, 1)
+            mv.visitEnd()
+        }
+        run {
+            mv = cw.visitMethod(Opcodes.ACC_PUBLIC, "getModuleFragment", "()Ljava/util/HashMap;",
+                    "()Ljava/util/HashMap<Ljava/lang/String;Ljava/lang/Class<+Landroid/support/v4/app/Fragment;>;>;", null)
+            run {
+                av0 = mv.visitAnnotation("Lorg/jetbrains/annotations/NotNull;", false)
+                av0.visitEnd()
+            }
+            mv.visitCode()
+            val l0 = Label()
+            mv.visitLabel(l0)
+            mv.visitLineNumber(16, l0)
+            mv.visitFieldInsn(Opcodes.GETSTATIC, "com/rong360/msm/api/DefaultModuleIndex", "fragmentMap", "Ljava/util/HashMap;")
             mv.visitInsn(Opcodes.DUP)
             val l1 = Label()
             mv.visitJumpInsn(Opcodes.IFNONNULL, l1)
@@ -120,6 +154,14 @@ class ModuleInfoWriter : Opcodes {
             mv.visitInsn(Opcodes.DUP)
             mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false)
             mv.visitFieldInsn(Opcodes.PUTSTATIC, "com/rong360/msm/api/DefaultModuleIndex", "viewMap", "Ljava/util/HashMap;")
+            val l2 = Label()
+            mv.visitLabel(l2)
+            mv.visitLineNumber(11, l2)
+            mv.visitTypeInsn(Opcodes.NEW, "java/util/HashMap")
+            mv.visitInsn(Opcodes.DUP)
+            mv.visitMethodInsn(Opcodes.INVOKESPECIAL, "java/util/HashMap", "<init>", "()V", false)
+            mv.visitFieldInsn(Opcodes.PUTSTATIC, "com/rong360/msm/api/DefaultModuleIndex", "fragmentMap",
+                    "Ljava/util/HashMap;")
             var i = 26
             for (key in serviceMap.keys) {
                 val value = serviceMap[key]
@@ -146,9 +188,22 @@ class ModuleInfoWriter : Opcodes {
                         "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false)
                 mv.visitInsn(Opcodes.POP)
             }
-            val l4 = Label()
-            mv.visitLabel(l4)
-            mv.visitLineNumber(i, l4)
+            for (key in fragmentMap.keys) {
+                val value = fragmentMap[key]
+                val l4 = Label()
+                mv.visitLabel(l4)
+                mv.visitLineNumber(i++, l4)
+                mv.visitFieldInsn(Opcodes.GETSTATIC, "com/rong360/msm/api/DefaultModuleIndex", "fragmentMap",
+                        "Ljava/util/HashMap;")
+                mv.visitLdcInsn(key)
+                mv.visitLdcInsn(Type.getType("L$value;"))
+                mv.visitMethodInsn(Opcodes.INVOKEVIRTUAL, "java/util/HashMap", "put",
+                        "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false)
+                mv.visitInsn(Opcodes.POP)
+            }
+            val l5 = Label()
+            mv.visitLabel(l5)
+            mv.visitLineNumber(i, l5)
             mv.visitInsn(Opcodes.RETURN)
             mv.visitMaxs(3, 0)
             mv.visitEnd()
@@ -165,6 +220,7 @@ class ModuleInfoWriter : Opcodes {
             mv.visitInsn(Opcodes.AASTORE)
             mv.visitVarInsn(Opcodes.ILOAD, 0)
             val l0 = Label()
+
             val l1 = Label()
             mv.visitTableSwitchInsn(0, 1, l0, *arrayOf(l0, l1))
             mv.visitLabel(l0)
@@ -174,15 +230,27 @@ class ModuleInfoWriter : Opcodes {
             mv.visitInsn(Opcodes.ICONST_1)
             mv.visitLdcInsn("getModuleView")
             mv.visitInsn(Opcodes.AASTORE)
+
+            val l21 = Label()
+            mv.visitJumpInsn(Opcodes.GOTO, l21)
+            mv.visitLabel(l1)
+            mv.visitFrame(Opcodes.F_FULL, 1, arrayOf<Any>(Opcodes.INTEGER), 2,
+                    arrayOf<Any>("java/lang/String", "[Ljava/lang/Object;"))
+            mv.visitInsn(Opcodes.DUP)
+            mv.visitInsn(Opcodes.ICONST_1)
+            mv.visitLdcInsn("getModuleFragment")
+            mv.visitInsn(Opcodes.AASTORE)
+
             val l2 = Label()
             mv.visitJumpInsn(Opcodes.GOTO, l2)
-            mv.visitLabel(l1)
+            mv.visitLabel(l21)
             mv.visitFrame(Opcodes.F_FULL, 1, arrayOf<Any>(Opcodes.INTEGER), 2,
                     arrayOf<Any>("java/lang/String", "[Ljava/lang/Object;"))
             mv.visitInsn(Opcodes.DUP)
             mv.visitInsn(Opcodes.ICONST_1)
             mv.visitLdcInsn("getModuleService")
             mv.visitInsn(Opcodes.AASTORE)
+
             mv.visitJumpInsn(Opcodes.GOTO, l2)
             mv.visitLabel(l2)
             mv.visitFrame(Opcodes.F_FULL, 1, arrayOf<Any>(Opcodes.INTEGER), 2,
