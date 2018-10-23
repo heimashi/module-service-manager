@@ -1,0 +1,5 @@
+<resources>
+    <string name="module_a_name">A Module View</string>
+    <string name="click_a">Click From A</string>
+    <string name="show_b_msg">Show B View Message</string>
+</resources>

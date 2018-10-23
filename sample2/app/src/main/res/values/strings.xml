@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MSM</string>
+    <string name="to_a">To A Module</string>
+    <string name="to_b">To B Module</string>
+</resources>
