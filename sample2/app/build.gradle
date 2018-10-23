@@ -21,15 +21,8 @@ android {
     }
 }
 
-
-
-
 dependencies {
-    if (!getBooleanPropertyIfExist("AIsApplicationMode")) {
-        runtimeOnly project(':sample2:module-a')
-    }
-    if (!getBooleanPropertyIfExist("BIsApplicationMode")) {
-        runtimeOnly project(':sample2:module-b')
-    }
+    runtimeOnly project(':sample2:module-a')
+    runtimeOnly project(':sample2:module-b')
     implementation project(':sample2:common')
 }
