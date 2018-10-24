@@ -25,7 +25,8 @@ android {
 dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api project(':msm-annotations')
+    //api project(':msm-annotations')
+    api 'com.rong360.msm:msm-annotations:1.0.0'
 }
 
 repositories {
