@@ -1,13 +1,78 @@
 //get gradle.property or ext.property boolean value
 def getBooleanPropertyIfExist(propertyString) {
-    if(hasProperty(propertyString)){
-        if(project[propertyString].toBoolean()){
+    if (hasProperty(propertyString)) {
+        if (project[propertyString].toBoolean()) {
             return true
         }
     }
     return false
 }
 
+//返回0，1，2三种数值，默认返回0
+def getCompileType(propertyString) {
+    if (hasProperty(propertyString)) {
+        try {
+            def t = Integer.parseInt(project[propertyString])
+            if (t == 1 || t == 2) {
+                return t
+            }
+        } catch (Exception ignored) {
+            return 0
+        }
+    }
+    return 0
+}
+
+//根据property选择依赖方式，0采用project形式编译，1采用aar形式编译，2不编译
+def compileByPropertyType(pro, modulePath, propertyString, version = '1.0.0') {
+    def type = getCompileType(propertyString)
+    if (type == 0) {
+        dependencies.runtimeOnly pro.project(":$modulePath")
+    } else if (type == 1) {
+        def moduleName
+        if (modulePath.lastIndexOf(':') >= 0) {
+            moduleName = modulePath.substring(modulePath.indexOf(':') + 1, modulePath.length())
+        } else {
+            moduleName = modulePath
+        }
+        dependencies.runtimeOnly "com.rong360.example.modules:$moduleName:$version@aar"
+    }
+}
+
+//add task about publishing aar to local maven
+task publishLocalMaven {
+    group = 'msm'
+    description = 'publish aar to local maven'
+    dependsOn project.path + ':clean'
+    finalizedBy 'uploadArchives'
+
+    doLast {
+        apply plugin: 'maven'
+        project.group = 'com.rong360.example.modules'
+        if (project.name == "module-a") {//may changer version
+            project.version = '1.0.0'
+        } else {
+            project.version = '1.0.0'
+        }
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    repository(url: uri(project.rootProject.rootDir.path + '/local_maven'))
+                }
+            }
+        }
+
+        uploadArchives.doFirst {
+            println "------- START publish aar:" + project.name + " " + project.version + " --------"
+        }
+
+        uploadArchives.doLast {
+            println "------- End publish aar:" + project.name + " " + project.version + " --------"
+        }
+    }
+}
+
 ext {
     getBooleanPropertyIfExist = this.&getBooleanPropertyIfExist
+    compileByPropertyType = this.&compileByPropertyType
 }

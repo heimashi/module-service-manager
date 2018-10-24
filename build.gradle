@@ -22,6 +22,9 @@ allprojects {
         maven {
             url 'https://dl.bintray.com/heimashi/maven'
         }
+        maven {
+            url "$rootDir/local_maven"
+        }
     }
     apply from: rootProject.getRootDir().getAbsolutePath() + "/utils.gradle"
 }

@@ -22,7 +22,8 @@ android {
 }
 
 dependencies {
-    runtimeOnly project(':sample2:module-a')
-    runtimeOnly project(':sample2:module-b')
+    compileByPropertyType(this, 'sample2:module-a', 'moduleACompileType')
+    compileByPropertyType(this, 'sample2:module-b', 'moduleBCompileType')
+
     implementation project(':sample2:common')
 }
