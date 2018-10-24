@@ -16,6 +16,7 @@
 采用像上图这样模块化改造之后，还可以进行更进一步的优化工作，例如支持模块的单独编译运行调试，优化代码编译速度等
 
 #### 模块的单独编译运行
+
 有两种思路可以实现模块的独立运行：
 - 思路1: **变量控制**，参考案例1[sample](https://github.com/heimashi/module-service-manager/tree/master/sample)
 	- 1、在各模块的build.gradle中，根据控制变量来决定依赖的library插件还是application插件
@@ -64,6 +65,119 @@
 	- module-a-app这样的工程都是application工程，提供模块启动的壳，具体参考案例2[sample2](https://github.com/heimashi/module-service-manager/tree/master/sample2)
 
 - **总结**：上面两种思路都实现了模块的独立编译运行，思路1的缺点是需要维护两套manifest等代码资源，每次修改gradle.properties的变量后需要重新sync一下代码可能比较浪费时间，相对而言思路2会更好一些，虽然增加了不少工程项目，但是收缩到一个目录下后也还是较好管理。
+
+
+#### 项目全量包打包速度优化
+
+经过上面的模块单独编译改造，模块本身的打包速度得到很大提高，因为模块本身可以以Application形式编译，不需要依赖其他无关模块。但是如果要进行壳工程的编译，即全量模块的打包，对于大项目时间还是会很慢。
+
+一种优化的思路是这样的：把模块的项目project形式依赖该为aar形式依赖，因为aar里已经是编译好的class代码了，减少了java编译为class和kotlin编译为class的过程。把不经常改变的模块打成aar，或者如果你在开发A模块，你就可以选择将所有除A模块以外的模块全部以aar形式进行依赖，或者你可以选择依赖你需要关心的模块，你不关心的模块可以不依赖。aar可以发布到公司内部私服里，还有一种办法是直接发布到本地maven库，即在本地建一个目录例如local_maven，将所有aar发布到该目录下，项目中再引入该本地maven即可。下面详细介绍通过脚本改造快捷的实现方案：
+
+- 首先在[utils.gradle](https://github.com/heimashi/module-service-manager/blob/master/utils.gradle)的脚本中添加发布aar的task，可以快捷的在所有的project中注入发布的task避免重复的发布脚本
+```Groovy
+//add task about publishing aar to local maven
+task publishLocalMaven {
+    group = 'msm'
+    description = 'publish aar to local maven'
+    dependsOn project.path + ':clean'
+    finalizedBy 'uploadArchives'
+
+    doLast {
+        apply plugin: 'maven'
+        project.group = 'com.rong360.example.modules'
+        if (project.name == "module-a") {//may changer version
+            project.version = '1.0.0'
+        } else {
+            project.version = '1.0.0'
+        }
+        uploadArchives {
+            repositories {
+                mavenDeployer {
+                    repository(url: uri(project.rootProject.rootDir.path + '/local_maven'))
+                }
+            }
+        }
+
+        uploadArchives.doFirst {
+            println "------- START publish aar:" + project.name + " " + project.version + " --------"
+        }
+
+        uploadArchives.doLast {
+            println "------- End publish aar:" + project.name + " " + project.version + " --------"
+        }
+    }
+}
+
+ext {
+    //...
+    compileByPropertyType = this.&compileByPropertyType
+}
+```
+
+- 然后就可以在各模块中执行发布aar的脚本，就可以在local_maven目录下查看到已发布的aar
+```Shell
+./gradlew :sample2:module-a:publishLocalMaven
+
+```
+
+- 在项目的build.gradle中加入本地的maven地址
+```Groovy
+repositories {
+        //...
+        maven {
+            url "$rootDir/local_maven"
+        }
+    }
+```
+
+- 在[utils.gradle](https://github.com/heimashi/module-service-manager/blob/master/utils.gradle)的脚本中添加根据变量控制编译方式的脚本
+```Groovy
+//返回0，1，2三种数值，默认返回0
+def getCompileType(propertyString) {
+    if (hasProperty(propertyString)) {
+        try {
+            def t = Integer.parseInt(project[propertyString])
+            if (t == 1 || t == 2) {
+                return t
+            }
+        } catch (Exception ignored) {
+            return 0
+        }
+    }
+    return 0
+}
+
+//根据property选择依赖方式，0采用project形式编译，1采用aar形式编译，2不编译
+def compileByPropertyType(pro, modulePath, propertyString, version = '1.0.0') {
+    def type = getCompileType(propertyString)
+    if (type == 0) {
+        dependencies.runtimeOnly pro.project(":$modulePath")
+    } else if (type == 1) {
+        def moduleName
+        if (modulePath.lastIndexOf(':') >= 0) {
+            moduleName = modulePath.substring(modulePath.indexOf(':') + 1, modulePath.length())
+        } else {
+            moduleName = modulePath
+        }
+        dependencies.runtimeOnly "com.rong360.example.modules:$moduleName:$version@aar"
+    }
+}
+```
+- 在gradle.properties中就可以添加控制变量来控制项目是以aar形式/project形式/不依赖三种情况来编译了
+```Groovy
+moduleACompileType=0
+moduleBCompileType=0
+```
+
+- 最后在壳工程中就可以调用compileByPropertyType来进行依赖了,根据gradle.property中的变量来选择依赖方式：0采用project形式编译，1采用aar形式编译，2不编译
+```Groovy
+dependencies {
+    compileByPropertyType(this, 'sample2:module-a', 'moduleACompileType')
+    compileByPropertyType(this, 'sample2:module-b', 'moduleBCompileType')
+    //...
+}
+```
+
 
 
 ## 模块化通信方案：module-service-manager
