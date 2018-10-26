@@ -24,20 +24,21 @@ def getCompileType(propertyString) {
 }
 
 //根据property选择依赖方式，0采用project形式编译，1采用aar形式编译，2不编译
-def compileByPropertyType(pro, modulePath, propertyString, version = '1.0.0') {
-    def type = getCompileType(propertyString)
+def runtimeOnlyByPropertyType(pro, modulePath, version = '1.0.0') {
+    def moduleName
+    if (modulePath.lastIndexOf(':') >= 0) {
+        moduleName = modulePath.substring(modulePath.indexOf(':') + 1, modulePath.length())
+    } else {
+        moduleName = modulePath
+    }
+    def type = getCompileType(moduleName+'CompileType')
     if (type == 0) {
         dependencies.runtimeOnly pro.project(":$modulePath")
     } else if (type == 1) {
-        def moduleName
-        if (modulePath.lastIndexOf(':') >= 0) {
-            moduleName = modulePath.substring(modulePath.indexOf(':') + 1, modulePath.length())
-        } else {
-            moduleName = modulePath
-        }
         dependencies.runtimeOnly "com.rong360.example.modules:$moduleName:$version@aar"
     }
 }
+
 
 //add task about publishing aar to local maven
 task publishLocalMaven {
@@ -63,16 +64,16 @@ task publishLocalMaven {
         }
 
         uploadArchives.doFirst {
-            println "------- START publish aar:" + project.name + " " + project.version + " --------"
+            println "START publish aar:" + project.name + " " + project.version
         }
 
         uploadArchives.doLast {
-            println "------- End publish aar:" + project.name + " " + project.version + " --------"
+            println "End publish aar:" + project.name + " " + project.version
         }
     }
 }
 
 ext {
     getBooleanPropertyIfExist = this.&getBooleanPropertyIfExist
-    compileByPropertyType = this.&compileByPropertyType
+    runtimeOnlyByPropertyType = this.&runtimeOnlyByPropertyType
 }

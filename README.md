@@ -99,11 +99,11 @@ task publishLocalMaven {
         }
 
         uploadArchives.doFirst {
-            println "------- START publish aar:" + project.name + " " + project.version + " --------"
+            println "START publish aar:" + project.name + " " + project.version
         }
 
         uploadArchives.doLast {
-            println "------- End publish aar:" + project.name + " " + project.version + " --------"
+            println "End publish aar:" + project.name + " " + project.version
         }
     }
 }
@@ -148,32 +148,37 @@ def getCompileType(propertyString) {
 }
 
 //根据property选择依赖方式，0采用project形式编译，1采用aar形式编译，2不编译
-def compileByPropertyType(pro, modulePath, propertyString, version = '1.0.0') {
-    def type = getCompileType(propertyString)
+def runtimeOnlyByPropertyType(pro, modulePath, version = '1.0.0') {
+    def moduleName
+    if (modulePath.lastIndexOf(':') >= 0) {
+        moduleName = modulePath.substring(modulePath.indexOf(':') + 1, modulePath.length())
+    } else {
+        moduleName = modulePath
+    }
+    def type = getCompileType(moduleName+'CompileType')
     if (type == 0) {
         dependencies.runtimeOnly pro.project(":$modulePath")
     } else if (type == 1) {
-        def moduleName
-        if (modulePath.lastIndexOf(':') >= 0) {
-            moduleName = modulePath.substring(modulePath.indexOf(':') + 1, modulePath.length())
-        } else {
-            moduleName = modulePath
-        }
         dependencies.runtimeOnly "com.rong360.example.modules:$moduleName:$version@aar"
     }
+}
+
+ext {
+    //...
+    runtimeOnlyByPropertyType = this.&runtimeOnlyByPropertyType
 }
 ```
 - 在gradle.properties中就可以添加控制变量来控制项目是以aar形式/project形式/不依赖三种情况来编译了
 ```Groovy
-moduleACompileType=0
-moduleBCompileType=0
+module-aCompileType=0
+module-bCompileType=0
 ```
 
 - 最后在壳工程中就可以调用compileByPropertyType来进行依赖了,根据gradle.property中的变量来选择依赖方式：0采用project形式编译，1采用aar形式编译，2不编译
 ```Groovy
 dependencies {
-    compileByPropertyType(this, 'sample2:module-a', 'moduleACompileType')
-    compileByPropertyType(this, 'sample2:module-b', 'moduleBCompileType')
+    runtimeOnlyByPropertyType(this, 'sample2:module-a')
+    runtimeOnlyByPropertyType(this, 'sample2:module-b')
     //...
 }
 ```
