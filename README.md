@@ -280,10 +280,11 @@ module-bCompileType=1
         - 然后在App工程中引入gradle插件，该插件会在Apk打包过程中利用Android
         gradle的transform来hook住所有class文件，然后扫描出class中含有模块注册信息的注解，将所有的注解信息记录下来，然后利用asm生成项目的服务索引表class：DefaultModuleIndex
         - 模块的调用方就可以通过这个服务管理中心查询注册好的服务了，反射实例化服务，之后就就可以顺利进行通信了。
+    - **总结** 思路2采用gradle插件的形式，使使用方只需在应用一次插件就完成了所有配置，更加方便灵活。
 
 
 
-## 模块化通信方案介绍：module-service-manager
+## 模块化通信方案介绍：[module-service-manager](https://github.com/heimashi/module-service-manager)
 
 Android模块化/组件化后组件间通信框架，支持模块间功能服务/View/Fragment的通信调用等，通过注解标示模块内需要暴露出来的服务和View，应用gradle插件会通过transform来hook编译过程，扫描出注解信息后再利用asm生成代码来向框架中注册对应的服务和View，之后模块间就可以利用框架这个桥梁来调用和通信了。
 
