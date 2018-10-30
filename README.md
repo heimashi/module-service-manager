@@ -1,9 +1,23 @@
-## 模块化/组件化
+模块化通信框架module-service-manager
+===========================
+
+****
+## 目录
+* [模块化或组件化](#模块化或组件化)
+* [理想的模块化架构](#理想的模块化架构)
+* [模块化后的一些优化](#模块化后的一些优化)
+* [模块化通信](#模块化通信)
+* [模块化通信方案介绍](#模块化通信方案介绍)
+* [模块间通信方案引入步骤](#模块间通信方案引入步骤)
+****
+
+## 模块化或组件化
 
 随着客户端项目越来越大，一个项目往往会分为不同的业务线，不同的业务线由不同的开发人员维护开发，模块化/组件化势在必行，一个模块代码一条业务线，模块内职责单一，模块间界限清晰，模块自身的复用更加方便快捷，模块化的好处很多，同时也存在一些需要改进的地方：例如编译速度的瓶颈越来越大、模块间怎么进行高效通信、模块怎么独立运行调试、模块的可插拨以及随意组合等等。
 
 
 ## 理想的模块化架构
+
 ![image](https://github.com/heimashi/module-service-manager/blob/master/imgs/modules.png)
 - 可以参考案例项目代码[sample2](https://github.com/heimashi/module-service-manager/tree/master/sample2)
 - 如上图所示，模块后的代码从下往上看，可以分为三层：
@@ -284,7 +298,8 @@ module-bCompileType=1
 
 
 
-## 模块化通信方案介绍：[module-service-manager](https://github.com/heimashi/module-service-manager)
+## 模块化通信方案介绍
+[module-service-manager](https://github.com/heimashi/module-service-manager)
 
 Android模块化/组件化后组件间通信框架，支持模块间功能服务/View/Fragment的通信调用等，通过注解标示模块内需要暴露出来的服务和View，应用gradle插件会通过transform来hook编译过程，扫描出注解信息后再利用asm生成代码来向框架中注册对应的服务和View，之后模块间就可以利用框架这个桥梁来调用和通信了。
 
